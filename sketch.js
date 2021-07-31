@@ -90,12 +90,14 @@ let furretImageDelayCounter = 0;
 let objectArray = [];
 let badObjectImageArray = [], goodObjectImageArray = [];
 let objectCoolDown;
-let objectCoolDownLower = 100, objectCoolDownUpper = 280;
+let objectCoolDownLower, objectCoolDownUpper;
 
 // our recording object
 let myRec;
 
 let collisionLines = false;
+
+let menuBarArray = [];
 
 function preload() {
 	mainFaceLeft = loadImage("images/charmanderLeft.png");
@@ -114,7 +116,7 @@ function preload() {
 	ouchSound1 = loadSound("sounds/ouch1.mp3");
 	ouchSound2 = loadSound("sounds/ouch2.mp3");
 	ouchSound3 = loadSound("sounds/ouch3.mp3");
-	// furretMusic = loadSound("sounds/furretMusic.mp3");
+	furretMusic = loadSound("sounds/furretMusic.mp3");
 
 	loseScreen = loadImage("images/lose.png");
 	loseMusic = loadSound("sounds/loseMusic.mp3");
@@ -143,19 +145,19 @@ function preload() {
 	parallaxImage1 = loadImage("images/parallax1.jpeg");
 	parallaxImage2 = loadImage("images/parallax2.jpeg");
 
-	let width;
+	let objectWidth;
 
-	width = 90;
-	badObjectImageArray.push([loadImage("images/bad_objects/apple.png"), 450, width, width * 1.12727272727, width * 0.3, width * 0.3, width * 1.12727272727 * 0, width * 1.12727272727 * 0]);
+	objectWidth = 90;
+	badObjectImageArray.push([loadImage("images/bad_objects/apple.png"), 450, objectWidth, objectWidth * 1.12727272727, objectWidth * 0.3, objectWidth * 0.3, objectWidth * 1.12727272727 * 0, objectWidth * 1.12727272727 * 0]);
 
-	width = 90;
-	badObjectImageArray.push([loadImage("images/bad_objects/banana.png"), 450, width, width * 1.29103608847, width * 0.6, width * 0.3, width * 1.29103608847 * 0, width * 1.29103608847 * 0]);
+	objectWidth = 90;
+	badObjectImageArray.push([loadImage("images/bad_objects/banana.png"), 450, objectWidth, objectWidth * 1.29103608847, objectWidth * 0.6, objectWidth * 0.3, objectWidth * 1.29103608847 * 0, objectWidth * 1.29103608847 * 0]);
 
-	width = 120;
-	goodObjectImageArray.push([loadImage("images/good_objects/newspaper.png"), 460, width, width * 1, width * 0.1, width * 0.1, width * 1 * 0.2, width * 1 * 0.4]);
+	objectWidth = 120;
+	goodObjectImageArray.push([loadImage("images/good_objects/newspaper.png"), 460, objectWidth, objectWidth * 1, objectWidth * 0.1, objectWidth * 0.1, objectWidth * 1 * 0.2, objectWidth * 1 * 0.4]);
 	
-	width = 55;
-	goodObjectImageArray.push([loadImage("images/good_objects/soda_can.png"), 450, width, width * 1.80909090909, width * 0, width * 0, width * 1.80909090909 * 0, width * 1.80909090909 * 0]);
+	objectWidth = 55;
+	goodObjectImageArray.push([loadImage("images/good_objects/soda_can.png"), 450, objectWidth, objectWidth * 1.80909090909, objectWidth * 0, objectWidth * 0, objectWidth * 1.80909090909 * 0, objectWidth * 1.80909090909 * 0]);
 }
 
 function setup() {
@@ -184,25 +186,36 @@ function setup() {
 
 	furret = new MainCharacter(furretImageArray, furretStartX, furretStartY);
 
+	menuBarArray.push(new MenuBar("Easy", 400, 90, 480, 100, 254, 246, 137, bar1, 440, 100, 180, 90, 605, 155, 1, 4, 100, 280, 0.9, -65));
+	menuBarArray.push(new MenuBar("Medium", 400, 220, 480, 100, 244, 237, 68, bar2, 440, 230, 175, 90, 575, 285, 2, 6, 80, 280, 1, -55));
+	menuBarArray.push(new MenuBar("Hard", 400, 350, 480, 100, 233, 190, 62, bar3, 440, 360, 175, 90, 605, 415, 3, 10, 50, 180, 1.2, -45));
+
 	gameReset();
 	//frameRate(40);
 }
 
 function draw() {
-	// if (furretMusic.isPlaying() == false) {
-	// 	furretMusic.play();
-	// }
+	if (furretMusic.isPlaying() == false) {
+		furretMusic.play();
+	}
 
-	parallaxBackground();
-	objectStuff();
-	furretStuff();
+	if (startScreenBoolean == true) {
+		startScreenStuff();
+		furret.display();
+	}
 
-	reportData();
+	else {
+		parallaxBackground();
+		objectStuff();
+		furretStuff();
+
+		reportData();
+	}
 }
 
 function keyPressed() {
 	if (key == ' ') {
-		if (furret.jumping == false && keyIsDown(32)) {
+		if (startScreenBoolean == false && furret.jumping == false && keyIsDown(32)) {
 			furret.jumping = true;
 			furret.jump();
 		}
@@ -220,8 +233,8 @@ class MainCharacter {
 		this.x = x;
 		this.y = y;
 		this.currentImageIndex = 0;
-		this.gravity = 0.9;
-		this.lift = -65;
+		// this.gravity = 0.9;
+		// this.lift = -65;
 		this.velocity = 0;
 		this.jumping = false;
 		this.width = 250;
@@ -369,9 +382,82 @@ class Objects {
 	}
 }
 
+class MenuBar {
+	constructor(text, posX, posY, sizeX, sizeY, r, g, b, menuImage, menuPosX, menuPosY, menuSizeX, menuSizeY, textX, textY, level, parallaxSpeed, objectCoolDownLower, objectCoolDownUpper, gravity, lift) {
+		this.text = text;
+		this.posX = posX;
+		this.posY = posY;
+		this.sizeX = sizeX;
+		this.sizeY = sizeY;
+		this.r = r;
+		this.g = g;
+		this.b = b;
+		this.menuImage = menuImage;
+		this.menuPosX = menuPosX;
+		this.menuPosY = menuPosY;
+		this.menuSizeX = menuSizeX;
+		this.menuSizeY = menuSizeY;
+		this.textX = textX;
+		this.textY = textY;
+		this.level = level;
+		this.parallaxSpeed = parallaxSpeed;
+		this.objectCoolDownLower = objectCoolDownLower;
+		this.objectCoolDownUpper = objectCoolDownUpper;
+		this.gravity = gravity;
+		this.lift = lift;
+	}
+
+	display() {
+		stroke(255);
+		fill(this.r, this.g, this.b);
+		rect(this.posX, this.posY, this.sizeX, this.sizeY, 10);
+		textSize(48);
+
+		if (mouseX >= this.posX && mouseX <= this.posX + this.sizeX && mouseY >= this.posY && mouseY <= this.posY + this.sizeY) {
+			// tint(255, 100);
+			image(this.menuImage, this.menuPosX, this.menuPosY, this.menuSizeX, this.menuSizeY);
+			// noTint();
+			fill(0, 100);
+		}
+		
+		else {
+			image(this.menuImage, this.menuPosX, this.menuPosY, this.menuSizeX, this.menuSizeY);
+			fill(0);
+		}
+
+		text(this.text, this.textX, this.textY);
+	}
+
+	checkPressed() {
+		if (mouseIsPressed && mouseX >= this.posX && mouseX <= this.posX + this.sizeX && mouseY >= this.posY && mouseY <= this.posY + this.sizeY) {
+			level = this.level;
+			parallaxSpeed = this.parallaxSpeed;
+			furret.gravity = this.gravity;
+			furret.lift = this.lift;
+			
+			objectCoolDownLower = this.objectCoolDownLower;
+			objectCoolDownUpper = this.objectCoolDownUpper;
+			objectCoolDown = Math.floor(random(objectCoolDownLower, objectCoolDownUpper));
+			
+			clickSound.play();
+			startScreenBoolean = false;
+		}
+	}
+}
+
 class Tear {
 	constructor(y) {
 		this.y = y;
+	}
+}
+
+function startScreenStuff() {
+	// imageMode(CORNER);
+	// image(parallaxImage1, 0, 0);
+	parallaxBackground();
+	for (let i = 0; i < menuBarArray.length; i++) {
+		menuBarArray[i].display();
+		menuBarArray[i].checkPressed();
 	}
 }
 
@@ -473,6 +559,7 @@ function parseResult() {
 }
 
 function gameReset() {
+	startScreenBoolean = true;
 	lives = 5; 
 	recyclableObjectsCollected = 0;
 	numberOfRecyclableObjectsToWin = 10;
@@ -498,7 +585,5 @@ function gameReset() {
 	}
 
 	objectArray.push(object);
-
-	objectCoolDown = Math.floor(random(objectCoolDownLower, objectCoolDownUpper));
 }
 
