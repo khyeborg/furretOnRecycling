@@ -264,6 +264,7 @@ function draw() {
 		furretStuff();
 
 		reportData();
+		gameRestartButton();
 
 		if (recyclableObjectsCollected == numberOfRecyclableObjectsToWin) {
 			winGameBoolean = true;
@@ -742,6 +743,34 @@ function loseScreenStuff() {
 		loseMessageCounter++;
 	}
 
+	// restart button
+	if (mouseX >= 1125 && mouseX <= 1265 && mouseY >= 535 && mouseY <= 580) {
+		stroke(255);
+		fill(233, 190, 62);
+		rect(1125, 535, 140, 45, 10);
+		textSize(28);
+		fill(255);
+		noStroke();
+		text("Restart", 1148, 568);
+	}
+
+	else {
+		stroke(255);
+		fill(0);
+		rect(1125, 535, 140, 45, 10);
+		textSize(28);
+		fill(255);
+		noStroke();
+		text("Restart", 1148, 568);
+	}
+
+	if (mouseIsPressed && mouseX >= 1125 && mouseX <= 1265 && mouseY >= 535 && mouseY <= 580) {
+		clickSound.play();
+		gameReset();
+	}
+}
+
+function gameRestartButton() {
 	// restart button
 	if (mouseX >= 1125 && mouseX <= 1265 && mouseY >= 535 && mouseY <= 580) {
 		stroke(255);
