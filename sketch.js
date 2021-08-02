@@ -27,6 +27,7 @@ let ouchSound1;
 let ouchSound2;
 let ouchSound3;
 let clickSound;
+let soundsArray = [];
 
 // variables for start screen
 let startScreenBoolean;
@@ -51,6 +52,7 @@ let winGameBoolean;
 let mainSizeDirection;
 
 // variables for lose
+let loseGameBoolean;
 let loseScreen;
 let loseMusic;
 let furretMusic;
@@ -73,12 +75,11 @@ let charWater = [];
 let charWaterCounter = 0;
 let charWaterMod = 0;
 let tearArray = [];
-let tearRate = 100;
-let tearCounter = 65;
-let tearY = 150;
+let tearRate = 160;
+let tearCounter = 90;
+let tearY = 275;
 
 let parallaxImage1, parallaxImage2;
-let currentParallax;
 let parallax1X = 0, parallax2X = 1280;
 let parallaxSpeed = 4;
 
@@ -86,6 +87,22 @@ let furretImageArray = [];
 let furret;
 let furretStartX = 185, furretStartY = 435;
 let furretImageDelayCounter = 0;
+let sadFurretImage;
+let happyFurretImageArray = [];
+let happyFurretCounter = 0;
+let loseMessageCounter = 0;
+let happyFurretCooldown = 0;
+let loseMessageCooldown = 0;
+let dancingFurretImage;
+let recyclingBinImage;
+let furretHeadImage;
+let furretBinCounter = 0;
+let furretTinCounter = 0;
+let furretR, furretG, furretB;
+let winMessageArray = [];
+let loseMessageArray = [];
+let winMessageCoolDown = 0;
+let jumpCounter = 0;
 
 let objectArray = [];
 let badObjectImageArray = [], goodObjectImageArray = [];
@@ -100,39 +117,24 @@ let collisionLines = false;
 let menuBarArray = [];
 
 function preload() {
-	mainFaceLeft = loadImage("images/charmanderLeft.png");
-	mainFaceRight = loadImage("images/charmanderRight.png");
-
 	heartImage = loadImage("images/heart.png");
-	backdrop = loadImage("images/beach.png");
 
-	startScreenBackdrop = loadImage("images/forest.png");
 	bar1 = loadImage("images/bar1.png");
 	bar2 = loadImage("images/bar2.png");
 	bar3 = loadImage("images/bar3.png");
-	clickSound = loadSound("sounds/click.mp3");
+	
+	clickSound = loadSound("sounds/click.mp3"); // soundsArray.push(clickSound);
+	scoreSound = loadSound("sounds/score.mp3"); soundsArray.push(scoreSound); 
+	ouchSound1 = loadSound("sounds/ouch1.mp3"); soundsArray.push(ouchSound1);
+	ouchSound2 = loadSound("sounds/ouch2.mp3"); soundsArray.push(ouchSound2);
+	ouchSound3 = loadSound("sounds/ouch3.mp3"); soundsArray.push(ouchSound3);
+	furretMusic = loadSound("sounds/furretMusic.mp3"); soundsArray.push(furretMusic);
 
-	scoreSound = loadSound("sounds/score.mp3");
-	ouchSound1 = loadSound("sounds/ouch1.mp3");
-	ouchSound2 = loadSound("sounds/ouch2.mp3");
-	ouchSound3 = loadSound("sounds/ouch3.mp3");
-	furretMusic = loadSound("sounds/furretMusic.mp3");
-
-	loseScreen = loadImage("images/lose.png");
-	loseMusic = loadSound("sounds/loseMusic.mp3");
-	lose1 = loadImage("images/lose1.png");
-	lose2 = loadImage("images/lose2.png");
-	loseRain = loadImage("images/loseRain.png");
+	loseMusic = loadSound("sounds/loseMusic.mp3"); soundsArray.push(loseMusic);
 	tearDrop = loadImage("images/tear.png");
+	sadFurretImage = loadImage("images/sad_furret.jpeg");
 
-	winMusic = loadSound("sounds/winMusic.mp3");
-
-	winScreen2 = loadImage("images/win2.png");
-	winScreen3 = loadImage("images/win3.png");
-	winScreen4 = loadImage("images/win4.png");
-	winScreen5 = loadImage("images/win5.png");
-	winScreen6 = loadImage("images/win6.png");
-	winScreen7 = loadImage("images/win7.png");
+	winMusic = loadSound("sounds/winMusic.mp3"); soundsArray.push(winMusic);
 
 	for (let i = 1; i <= 4; i++) {
 		charWater.push(loadImage("images/charWater/char" + i + ".png"));
@@ -142,29 +144,80 @@ function preload() {
 		furretImageArray.push(loadImage("images/furret/" + i + ".png"));
 	}
 
+	// for (let i = 1; i <= 90; i++) {
+	// 	happyFurretImageArray.push(loadImage("images/happy_furret/" + i + ".png"));
+	// }
+
+	for (let i = 0; i <= 50; i++) {
+		winMessageArray.push(loadImage("images/win_message/" + i + ".png"));
+	}
+
+	for (let i = 0; i <= 38; i++) {
+		loseMessageArray.push(loadImage("images/lose_message/" + i + ".png"));
+	}
+
+	dancingFurretImage = loadImage("images/furret_dancing.png");
+	recyclingBinImage = loadImage("images/recycling_bin.png");
+	furretHeadImage = loadImage("images/furret_head.png");
+
 	parallaxImage1 = loadImage("images/parallax1.jpeg");
 	parallaxImage2 = loadImage("images/parallax2.jpeg");
 
 	let objectWidth;
+	let heightWidthRatio;
 
 	objectWidth = 90;
-	badObjectImageArray.push([loadImage("images/bad_objects/apple.png"), 450, objectWidth, objectWidth * 1.12727272727, objectWidth * 0.3, objectWidth * 0.3, objectWidth * 1.12727272727 * 0, objectWidth * 1.12727272727 * 0]);
+	heightWidthRatio = 1.12727272727;
+	badObjectImageArray.push([loadImage("images/bad_objects/apple.png"), 450, objectWidth, objectWidth * heightWidthRatio, objectWidth * 0.3, objectWidth * 0.3, objectWidth * heightWidthRatio * 0, objectWidth * heightWidthRatio * 0]);
 
 	objectWidth = 90;
-	badObjectImageArray.push([loadImage("images/bad_objects/banana.png"), 450, objectWidth, objectWidth * 1.29103608847, objectWidth * 0.6, objectWidth * 0.3, objectWidth * 1.29103608847 * 0, objectWidth * 1.29103608847 * 0]);
+	heightWidthRatio = 1.29103608847;
+	badObjectImageArray.push([loadImage("images/bad_objects/banana.png"), 450, objectWidth, objectWidth * heightWidthRatio, objectWidth * 0.6, objectWidth * 0.3, objectWidth * heightWidthRatio * 0, objectWidth * heightWidthRatio * 0]);
+
+	objectWidth = 100;
+	heightWidthRatio = 1.45065789474;
+	badObjectImageArray.push([loadImage("images/bad_objects/plastic_bag.png"), 430, objectWidth, objectWidth * heightWidthRatio, objectWidth * 0.1, objectWidth * 0.1, objectWidth * heightWidthRatio * 0.5, objectWidth * heightWidthRatio * 0]);
 
 	objectWidth = 120;
-	goodObjectImageArray.push([loadImage("images/good_objects/newspaper.png"), 460, objectWidth, objectWidth * 1, objectWidth * 0.1, objectWidth * 0.1, objectWidth * 1 * 0.2, objectWidth * 1 * 0.4]);
+	heightWidthRatio = 1.09186746988;
+	badObjectImageArray.push([loadImage("images/bad_objects/styrofoam.png"), 450, objectWidth, objectWidth * heightWidthRatio, objectWidth * 0.1, objectWidth * 0.1, objectWidth * heightWidthRatio * 0.1, objectWidth * heightWidthRatio * 0.1]);
+
+	objectWidth = 120;
+	heightWidthRatio = 1;
+	badObjectImageArray.push([loadImage("images/bad_objects/styrofoam_cup.png"), 450, objectWidth, objectWidth * heightWidthRatio, objectWidth * 0.4, objectWidth * 0.4, objectWidth * heightWidthRatio * 0, objectWidth * heightWidthRatio * 0]);
+
+	objectWidth = 50;
+	heightWidthRatio = 2.07906976744;
+	badObjectImageArray.push([loadImage("images/bad_objects/battery.png"), 450, objectWidth, objectWidth * heightWidthRatio, objectWidth * 0, objectWidth * 0, objectWidth * heightWidthRatio * 0, objectWidth * heightWidthRatio * 0]);
+
+	objectWidth = 120;
+	heightWidthRatio = 1;
+	goodObjectImageArray.push([loadImage("images/good_objects/newspaper.png"), 460, objectWidth, objectWidth * heightWidthRatio, objectWidth * 0.1, objectWidth * 0.1, objectWidth * heightWidthRatio * 0.2, objectWidth * heightWidthRatio * 0.4]);
 	
 	objectWidth = 55;
-	goodObjectImageArray.push([loadImage("images/good_objects/soda_can.png"), 450, objectWidth, objectWidth * 1.80909090909, objectWidth * 0, objectWidth * 0, objectWidth * 1.80909090909 * 0, objectWidth * 1.80909090909 * 0]);
+	heightWidthRatio = 1.80909090909;
+	goodObjectImageArray.push([loadImage("images/good_objects/soda_can.png"), 450, objectWidth, objectWidth * heightWidthRatio, objectWidth * 0, objectWidth * 0, objectWidth * heightWidthRatio * 0, objectWidth * heightWidthRatio * 0]);
+
+	objectWidth = 100;
+	heightWidthRatio = 1.35;
+	goodObjectImageArray.push([loadImage("images/good_objects/beer_bottle.png"), 430, objectWidth, objectWidth * heightWidthRatio, objectWidth * 0.6, objectWidth * 0.6, objectWidth * heightWidthRatio * 0, objectWidth * heightWidthRatio * 0]);
+
+	objectWidth = 120;
+	heightWidthRatio = 1.0752688172;
+	goodObjectImageArray.push([loadImage("images/good_objects/pizza_box.png"), 450, objectWidth, objectWidth * heightWidthRatio, objectWidth * 0.3, objectWidth * 0.1, objectWidth * heightWidthRatio * 0.1, objectWidth * heightWidthRatio * 0.3]);
+
+	objectWidth = 50;
+	heightWidthRatio = 2.8978978979;
+	goodObjectImageArray.push([loadImage("images/good_objects/plastic_bottle.png"), 430, objectWidth, objectWidth * heightWidthRatio, objectWidth * 0, objectWidth * 0.1, objectWidth * heightWidthRatio * 0.2, objectWidth * heightWidthRatio * 0]);
+
+	objectWidth = 70;
+	heightWidthRatio = 2.27338129496
+	goodObjectImageArray.push([loadImage("images/good_objects/milk_carton.png"), 430, objectWidth, objectWidth * heightWidthRatio, objectWidth * 0.05, objectWidth * 0.1, objectWidth * heightWidthRatio * 0.15, objectWidth * heightWidthRatio * 0.1]);
 }
 
 function setup() {
 	theCanvas = createCanvas(1280, 595);
 	//repositionCanvas();
-
-	currentParallax = parallaxImage1;
 
 	// create speech to text object
 	myRec = new p5.SpeechRec();
@@ -195,21 +248,39 @@ function setup() {
 }
 
 function draw() {
-	if (furretMusic.isPlaying() == false) {
+	// music to play
+	if (furretMusic.isPlaying() == false && winGameBoolean == false  && loseGameBoolean == false) {
 		furretMusic.play();
 	}
 
-	if (startScreenBoolean == true) {
+	if (startScreenBoolean == true && winGameBoolean == false  && loseGameBoolean == false) {
 		startScreenStuff();
 		furret.display();
 	}
 
-	else {
+	else if (startScreenBoolean == false && winGameBoolean == false && loseGameBoolean == false) {
 		parallaxBackground();
 		objectStuff();
 		furretStuff();
 
 		reportData();
+
+		if (recyclableObjectsCollected == numberOfRecyclableObjectsToWin) {
+			winGameBoolean = true;
+			background(255);
+		}
+
+		if (lives <= 0) {
+			loseGameBoolean = true;
+		}
+	}
+
+	else if (winGameBoolean == true) {
+		winScreenStuff();
+	}
+
+	else if (loseGameBoolean == true) {
+		loseScreenStuff();
 	}
 }
 
@@ -249,9 +320,12 @@ class MainCharacter {
 	display() {
 		imageMode(CENTER);
 		image(this.imageArray[this.currentImageIndex], this.x, this.y, this.width, this.height)
-		furretImageDelayCounter++;
+		
+		if (this.jumping == false) {
+			furretImageDelayCounter++;
+		}
 
-		if (furretImageDelayCounter % 2 == 0) {
+		if (furretImageDelayCounter % 2 == 0 && this.jumping == false) {
 			this.currentImageIndex++;
 		}
 
@@ -262,6 +336,16 @@ class MainCharacter {
 
 	jump() {
 		this.velocity += this.lift;
+
+		if (jumpCounter % 2 == 0) {
+			this.currentImageIndex = 4;
+		}
+
+		else if (jumpCounter % 2 == 1) {
+			this.currentImageIndex = 6;
+		}
+
+		jumpCounter++;
 	}
 
 	update() {
@@ -352,6 +436,13 @@ class Objects {
 	  			recyclableObjectsCollected++;
 
 	  			scoreSound.play();
+
+	  			// stop all sounds if win
+	  			if (recyclableObjectsCollected == numberOfRecyclableObjectsToWin) {
+	  				for (let i = 0; i < soundsArray.length; i++) {
+						soundsArray[i].stop();
+					}
+	  			}
 	  		}
 
 	  		// non-recyclable objects
@@ -377,6 +468,13 @@ class Objects {
 		   	 	else {
 		   	 		ouchSound3.play();
 		   	 	}
+
+		   	 	// stop all sounds if lose
+	  			if (lives <= 0) {
+	  				for (let i = 0; i < soundsArray.length; i++) {
+						soundsArray[i].stop();
+					}
+	  			}
 			}
 		}
 	}
@@ -507,13 +605,13 @@ function objectStuff() {
 
 		if (goodOrBadNum == 0) {
 			let goodObjectNum = Math.floor(random(goodObjectImageArray.length));
-			// goodObjectNum = 0;
+			// goodObjectNum = 5;
 			object = new Objects("good", goodObjectImageArray[goodObjectNum][0], width + 100, goodObjectImageArray[goodObjectNum][1], goodObjectImageArray[goodObjectNum][2], goodObjectImageArray[goodObjectNum][3], goodObjectImageArray[goodObjectNum][4], goodObjectImageArray[goodObjectNum][5], goodObjectImageArray[goodObjectNum][6], goodObjectImageArray[goodObjectNum][7]);
 		}
 
 		else if (goodOrBadNum == 1) {
 			let badObjectNum = Math.floor(random(badObjectImageArray.length));
-			// badObjectNum = 1;
+			// badObjectNum = 5;
 			object = new Objects("bad", badObjectImageArray[badObjectNum][0], width + 100, badObjectImageArray[badObjectNum][1], badObjectImageArray[badObjectNum][2], badObjectImageArray[badObjectNum][3], badObjectImageArray[badObjectNum][4], badObjectImageArray[badObjectNum][5], badObjectImageArray[badObjectNum][6], badObjectImageArray[badObjectNum][7]);
 		}
 
@@ -528,6 +626,144 @@ function objectStuff() {
 			objectArray.splice(0, 1);
 			//console.log("removed the first object");
 		}
+	}
+}
+
+function winScreenStuff() {
+
+	if (winMusic.isPlaying() == false) {
+		winMusic.play();
+	}
+
+	imageMode(CENTER);
+
+	// tint(random(120, 255), random(120, 255), random(120, 255));
+	image(dancingFurretImage, random(width), random(height), 40, 40 * 1.41356382979);
+	noTint();
+
+	// image(happyFurretImageArray[happyFurretCounter], width / 2, height / 2);
+	// happyFurretCooldown++;
+
+	// if (happyFurretCooldown % 2 == 0) {
+	// 	happyFurretCounter++;
+
+	// 	if (happyFurretCounter == happyFurretImageArray.length) {
+	// 		happyFurretCounter = 0;
+	// 	}
+	// }
+
+	image(recyclingBinImage, 1000, 410, 260, 260 * 1.4481409002);
+
+	furretTinCounter++;
+	image(furretHeadImage, 1012, 183, 240, 240 * 1.19854014599);
+
+	image(winMessageArray[happyFurretCounter], 450, 105, 800, 800 * 0.24793388429);
+	happyFurretCooldown++;
+
+	if (happyFurretCooldown % 8 == 0 && happyFurretCounter < winMessageArray.length - 1) {
+		happyFurretCounter++;
+	}
+
+	if (happyFurretCounter >= winMessageArray.length - 1) {
+		winMessageCoolDown++;
+
+		if (winMessageCoolDown < 150) {
+			image(winMessageArray[winMessageArray.length - 1], 450, 105, 800, 800 * 0.24793388429);
+		}
+
+		else if (winMessageCoolDown % 150 <= 35) {
+			image(winMessageArray[0], 450, 105, 800, 800 * 0.24793388429);
+		}
+
+		else {
+			image(winMessageArray[winMessageArray.length - 1], 450, 105, 800, 800 * 0.24793388429);
+		}
+	}
+
+	// restart button
+	if (mouseX >= 20 && mouseX <= 160 && mouseY >= 535 && mouseY <= 580) {
+		stroke(255);
+		fill(233, 190, 62);
+		rect(20, 535, 140, 45, 10);
+		textSize(28);
+		fill(255);
+		noStroke();
+		text("Restart", 43, 568);
+	}
+
+	else {
+		stroke(255);
+		fill(0);
+		rect(20, 535, 140, 45, 10);
+		textSize(28);
+		fill(255);
+		noStroke();
+		text("Restart", 43, 568);
+	}
+
+	if (mouseIsPressed && mouseX >= 20 && mouseX <= 160 && mouseY >= 535 && mouseY <= 580) {
+		clickSound.play();
+		gameReset();
+	}
+}
+
+function loseScreenStuff() {
+	background(200, 196, 188);
+
+	if (loseMusic.isPlaying() == false) {
+		loseMusic.play();
+	}
+
+	imageMode(CENTER);
+	image(sadFurretImage, width / 4, height / 2, 400, 423);
+
+	if (tearCounter == tearRate) {
+		tearArray.push(new Tear(tearY));
+		tearCounter = 0;
+	}
+
+	tearCounter++;
+
+	for (var i = 0; i < tearArray.length; i++) {
+		image(tearDrop, 260, tearArray[i].y, 105, 105);
+		tearArray[i].y += 1;
+	}
+
+	noStroke();
+	fill(200, 196, 188);
+	rect(0, 509, 520, 100);
+
+	image(loseMessageArray[loseMessageCounter], 900, 200, 700, 700 * 0.31578947368);
+	loseMessageCooldown++;
+
+	if (loseMessageCooldown % 8 == 0 && loseMessageCounter < loseMessageArray.length - 1) {
+		loseMessageCounter++;
+	}
+
+	// restart button
+	if (mouseX >= 1125 && mouseX <= 1265 && mouseY >= 535 && mouseY <= 580) {
+		stroke(255);
+		fill(233, 190, 62);
+		rect(1125, 535, 140, 45, 10);
+		textSize(28);
+		fill(255);
+		noStroke();
+		text("Restart", 1148, 568);
+	}
+
+	else {
+		stroke(255);
+		fill(0);
+		rect(1125, 535, 140, 45, 10);
+		textSize(28);
+		fill(255);
+		noStroke();
+		text("Restart", 1148, 568);
+	}
+
+	if (mouseIsPressed && mouseX >= 1125 && mouseX <= 1265 && mouseY >= 535 && mouseY <= 580) {
+		clickSound.play();
+		gameReset();
 	}
 }
 
@@ -556,6 +792,11 @@ function parseResult() {
 	let mostRecentWord = wordArray[ wordArray.length - 1];
 
 	// evaluate word
+	// console.log(mostRecentWord);
+	// if (mostRecentWord == "jump" && startScreenBoolean == false && furret.jumping == false) {
+	// 	furret.jump();
+	// 	furret.jumping = true;
+	// }
 }
 
 function gameReset() {
@@ -563,6 +804,28 @@ function gameReset() {
 	lives = 5; 
 	recyclableObjectsCollected = 0;
 	numberOfRecyclableObjectsToWin = 10;
+	tearArray = [];
+	winGameBoolean = false;
+	loseGameBoolean = false;
+	furret.jumping = false;
+	furret.currentImageIndex = 0;
+	furretImageDelayCounter = 0;
+	parallax1X = 0;
+	parallax2X = 1280;
+	parallaxSpeed = 4;
+	objectArray = [];
+
+	happyFurretCounter = 0;
+	loseMessageCounter = 0;
+	happyFurretCooldown = 0;
+	loseMessageCooldown = 0;
+	furretBinCounter = 0;
+	furretTinCounter = 0;
+	winMessageCoolDown = 0;
+
+	for (let i = 0; i < soundsArray.length; i++) {
+		soundsArray[i].stop();
+	}
 
 	// sound setup
 	randomOuchNum = Math.floor(random(0,3));
@@ -574,13 +837,13 @@ function gameReset() {
 
 	if (goodOrBadNum == 0) {
 		let goodObjectNum = Math.floor(random(goodObjectImageArray.length));
-		// goodObjectNum = 0;
+		// goodObjectNum = 5;
 		object = new Objects("good", goodObjectImageArray[goodObjectNum][0], width - 200, goodObjectImageArray[goodObjectNum][1], goodObjectImageArray[goodObjectNum][2], goodObjectImageArray[goodObjectNum][3], goodObjectImageArray[goodObjectNum][4], goodObjectImageArray[goodObjectNum][5], goodObjectImageArray[goodObjectNum][6], goodObjectImageArray[goodObjectNum][7]);
 	}
 
 	else if (goodOrBadNum == 1) {
 		let badObjectNum = Math.floor(random(badObjectImageArray.length));
-		// badObjectNum = 1;
+		// badObjectNum = 5;
 		object = new Objects("bad", badObjectImageArray[badObjectNum][0], width - 200, badObjectImageArray[badObjectNum][1], badObjectImageArray[badObjectNum][2], badObjectImageArray[badObjectNum][3], badObjectImageArray[badObjectNum][4], badObjectImageArray[badObjectNum][5], badObjectImageArray[badObjectNum][6], badObjectImageArray[badObjectNum][7]);
 	}
 
