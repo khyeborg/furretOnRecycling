@@ -198,7 +198,7 @@ function preload() {
 	heightWidthRatio = 1.80909090909;
 	goodObjectImageArray.push([loadImage("images/good_objects/soda_can.png"), 450, objectWidth, objectWidth * heightWidthRatio, objectWidth * 0, objectWidth * 0, objectWidth * heightWidthRatio * 0, objectWidth * heightWidthRatio * 0]);
 
-	objectWidth = 100;
+	objectWidth = 110;
 	heightWidthRatio = 1.35;
 	goodObjectImageArray.push([loadImage("images/good_objects/beer_bottle.png"), 430, objectWidth, objectWidth * heightWidthRatio, objectWidth * 0.6, objectWidth * 0.6, objectWidth * heightWidthRatio * 0, objectWidth * heightWidthRatio * 0]);
 
@@ -336,14 +336,16 @@ class MainCharacter {
 
 	jump() {
 		this.velocity += this.lift;
+		this.currentImageIndex = 4;
 
-		if (jumpCounter % 2 == 0) {
-			this.currentImageIndex = 4;
-		}
+		// // different jump graphics
+		// if (jumpCounter % 2 == 0) {
+		// 	this.currentImageIndex = 4;
+		// }
 
-		else if (jumpCounter % 2 == 1) {
-			this.currentImageIndex = 6;
-		}
+		// else if (jumpCounter % 2 == 1) {
+		// 	this.currentImageIndex = 6;
+		// }
 
 		jumpCounter++;
 	}
@@ -655,7 +657,7 @@ function winScreenStuff() {
 	image(recyclingBinImage, 1000, 410, 260, 260 * 1.4481409002);
 
 	furretTinCounter++;
-	image(furretHeadImage, 1012, 183, 240, 240 * 1.19854014599);
+	image(furretHeadImage, 1015, 183, 240, 240 * 1.19854014599);
 
 	image(winMessageArray[happyFurretCounter], 450, 105, 800, 800 * 0.24793388429);
 	happyFurretCooldown++;
@@ -822,6 +824,9 @@ function gameReset() {
 	furretBinCounter = 0;
 	furretTinCounter = 0;
 	winMessageCoolDown = 0;
+
+	furret.x = furretStartX;
+	furret.y = furretStartY;
 
 	for (let i = 0; i < soundsArray.length; i++) {
 		soundsArray[i].stop();
