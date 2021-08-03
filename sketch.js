@@ -79,8 +79,8 @@ let tearRate = 160;
 let tearCounter = 90;
 let tearY = 275;
 
-let parallaxImage1, parallaxImage2;
-let parallax1X = 0, parallax2X = 1024;
+let parallaxImage1, parallaxImage2, parallaxImage3;
+let parallax1X = 0, parallax2X = 1024, parallax3X = 2048;
 let parallaxSpeed = 4;
 
 let furretImageArray = [];
@@ -160,8 +160,9 @@ function preload() {
 	recyclingBinImage = loadImage("images/recycling_bin.png");
 	furretHeadImage = loadImage("images/furret_head.png");
 
-	parallaxImage1 = loadImage("images/parallax1.jpeg");
-	parallaxImage2 = loadImage("images/parallax2.jpeg");
+	parallaxImage1 = loadImage("images/parallax.jpeg");
+	parallaxImage2 = loadImage("images/parallax.jpeg");
+	parallaxImage3 = loadImage("images/parallax.jpeg");
 
 	let objectWidth;
 	let heightWidthRatio;
@@ -552,8 +553,6 @@ class Tear {
 }
 
 function startScreenStuff() {
-	// imageMode(CORNER);
-	// image(parallaxImage1, 0, 0);
 	parallaxBackground();
 	for (let i = 0; i < menuBarArray.length; i++) {
 		menuBarArray[i].display();
@@ -565,16 +564,22 @@ function parallaxBackground() {
 	imageMode(CORNER);
 	image(parallaxImage1, parallax1X, 0);
 	image(parallaxImage2, parallax2X, 0);
+	image(parallaxImage3, parallax3X, 0);
 
 	parallax1X -= parallaxSpeed;
 	parallax2X -= parallaxSpeed;
+	parallax3X -= parallaxSpeed;
 
 	if (parallax1X <= -1024) {
-		parallax1X = 1024;
+		parallax1X = 2048;
 	}
 
 	if (parallax2X <= -1024) {
-		parallax2X = 1024;
+		parallax2X = 2048;
+	}
+
+	if (parallax3X <= -1024) {
+		parallax3X = 2048;
 	}
 }
 
