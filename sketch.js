@@ -654,12 +654,12 @@ function winScreenStuff() {
 	// 	}
 	// }
 
-	image(recyclingBinImage, 1000, 410, 260, 260 * 1.4481409002);
+	image(recyclingBinImage, 1045, 410, 260, 260 * 1.4481409002);
 
 	furretTinCounter++;
-	image(furretHeadImage, 1015, 183, 240, 240 * 1.19854014599);
+	image(furretHeadImage, 1060, 183, 240, 240 * 1.19854014599);
 
-	image(winMessageArray[happyFurretCounter], 450, 130, 800, 800 * 0.24793388429);
+	image(winMessageArray[happyFurretCounter], 480, 130, 800, 800 * 0.24793388429);
 	happyFurretCooldown++;
 
 	if (happyFurretCooldown % 8 == 0 && happyFurretCounter < winMessageArray.length - 1) {
@@ -670,15 +670,15 @@ function winScreenStuff() {
 		winMessageCoolDown++;
 
 		if (winMessageCoolDown < 150) {
-			image(winMessageArray[winMessageArray.length - 1], 450, 130, 800, 800 * 0.24793388429);
+			image(winMessageArray[winMessageArray.length - 1], 480, 130, 800, 800 * 0.24793388429);
 		}
 
 		else if (winMessageCoolDown % 150 <= 35) {
-			image(winMessageArray[0], 450, 130, 800, 800 * 0.24793388429);
+			image(winMessageArray[0], 480, 130, 800, 800 * 0.24793388429);
 		}
 
 		else {
-			image(winMessageArray[winMessageArray.length - 1], 450, 130, 800, 800 * 0.24793388429);
+			image(winMessageArray[winMessageArray.length - 1], 480, 130, 800, 800 * 0.24793388429);
 		}
 	}
 
