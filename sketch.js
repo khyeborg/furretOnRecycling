@@ -640,7 +640,7 @@ function winScreenStuff() {
 	imageMode(CENTER);
 
 	// tint(random(120, 255), random(120, 255), random(120, 255));
-	// image(dancingFurretImage, random(width), random(height), 40, 40 * 1.41356382979);
+	image(dancingFurretImage, random(width), random(height), 40, 40 * 1.41356382979);
 	// noTint();
 
 	// image(happyFurretImageArray[happyFurretCounter], width / 2, height / 2);
@@ -687,7 +687,6 @@ function winScreenStuff() {
 	rect(0, 0, width, 10);
 	rect(width - 10, 0, 10, height);
 	rect(0, height - 10, width, 10);
-
 
 	// restart button
 	if (mouseX >= 30 && mouseX <= 170 && mouseY >= 525 && mouseY <= 570) {
